@@ -13,7 +13,4 @@ Aplikasi web sederhana untuk mencatat dan memantau tabungan bersama secara *real
 * **Database:** Firebase Realtime Database
 * **Hosting:** Vercel / GitHub Pages
 
-## 📂 Cara Menjalankan Proyek
-1. Clone repository ini:
-   ```bash
-   git clone [https://github.com/USERNAME/ourbank.git](https://github.com/USERNAME/ourbank.git)
+
