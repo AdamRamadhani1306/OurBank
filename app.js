@@ -14,7 +14,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-const TARGET_TABUNGAN = 50000; // Target default: Rp 10.000.000
+const TARGET_TABUNGAN = 500000; // Target default: Rp 10.000.000
 let currentUser = null;
 
 // PIN Sederhana
