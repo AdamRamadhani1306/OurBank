@@ -23,6 +23,18 @@ const USER_PINS = {
   "Nadine": "nadine1306"
 };
 
+// --- INTRO / WARNING MODAL ---
+function closeIntroModal() {
+  const modal = document.getElementById("intro-modal");
+  if (!modal) return;
+
+  modal.classList.add("fade-out");
+  // Tunggu animasi fade-out selesai (selaras dengan transisi CSS 0.4s) baru disembunyikan
+  setTimeout(() => {
+    modal.classList.add("hidden");
+  }, 400);
+}
+
 // --- LOGIKA LOGIN & LOGOUT ---
 function login() {
   const userSelect = document.getElementById("username").value;
@@ -32,19 +44,22 @@ function login() {
   if (USER_PINS[userSelect] === pinInput) {
     currentUser = userSelect;
     document.getElementById("user-display").innerText = currentUser;
+    document.getElementById("user-avatar").innerText = currentUser.charAt(0).toUpperCase();
+    errorElement.innerText = "";
     document.getElementById("login-screen").classList.add("hidden");
     document.getElementById("dashboard-screen").classList.remove("hidden");
-    
+
     // Mulai mendengarkan perubahan data dari Firebase secara Realtime
     listenToData();
   } else {
-    errorElement.innerText = "PIN salah! Coba lagi.";
+    errorElement.innerText = "PIN salah. Coba lagi.";
   }
 }
 
 function logout() {
   currentUser = null;
   document.getElementById("password").value = "";
+  document.getElementById("login-error").innerText = "";
   document.getElementById("login-screen").classList.remove("hidden");
   document.getElementById("dashboard-screen").classList.add("hidden");
 }
@@ -66,7 +81,7 @@ function listenToData() {
 
     let totalSaldo = 0;
     let totalMingguIni = 0;
-    
+
     // Menghitung awal minggu ini (Senin/Minggu)
     const now = new Date();
     const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
@@ -91,12 +106,15 @@ function listenToData() {
         year: "numeric"
       });
 
+      // Badge warna berbeda per pengguna, tanpa emoji
+      const badgeClass = item.user === "Adam" ? "user-badge" : "user-badge badge-alt";
+
       // Render daftar riwayat ke HTML
       const li = document.createElement("li");
       li.className = "history-item";
       li.innerHTML = `
         <div>
-          <span class="user-badge">${item.user}</span>
+          <span class="${badgeClass}">${item.user}</span>
           <b>Rp ${nominal.toLocaleString("id-ID")}</b>
           <div class="text-subtle">${item.note || "Setoran tabungan"}</div>
         </div>
@@ -143,5 +161,13 @@ function updateSummary(total, minggu) {
 
   const percentage = Math.min(Math.round((total / TARGET_TABUNGAN) * 100), 100);
   document.getElementById("progress-bar").style.width = `${percentage}%`;
-  document.getElementById("progress-text").innerText = `${percentage}% tercapai (${total.toLocaleString("id-ID")} / ${TARGET_TABUNGAN.toLocaleString("id-ID")})`;
+  document.getElementById("progress-text").innerText = `${percentage}% tercapai (Rp ${total.toLocaleString("id-ID")} dari Rp ${TARGET_TABUNGAN.toLocaleString("id-ID")})`;
 }
+
+// --- INISIALISASI TAMPILAN TARGET ---
+document.addEventListener("DOMContentLoaded", () => {
+  const targetDisplay = document.getElementById("target-display");
+  if (targetDisplay) {
+    targetDisplay.innerText = TARGET_TABUNGAN.toLocaleString("id-ID");
+  }
+});
