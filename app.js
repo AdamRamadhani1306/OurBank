@@ -14,7 +14,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-const TARGET_TABUNGAN = 500000; // Target default: Rp 10.000.000
+const TARGET_TABUNGAN = 50000; // Target default: Rp 10.000.000
 let currentUser = null;
 
 // PIN Sederhana
@@ -87,10 +87,10 @@ function listenToData() {
     const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
     startOfWeek.setHours(0, 0, 0, 0);
 
-    // Ambil data dan urutkan agar transaksi terbaru muncul di atas
-    const items = Object.values(data).reverse();
+    // Ambil data (beserta key) dan urutkan agar transaksi terbaru muncul di atas
+    const items = Object.entries(data).reverse();
 
-    items.forEach((item) => {
+    items.forEach(([key, item]) => {
       const nominal = parseInt(item.amount);
       totalSaldo += nominal;
 
@@ -118,7 +118,17 @@ function listenToData() {
           <b>Rp ${nominal.toLocaleString("id-ID")}</b>
           <div class="text-subtle">${item.note || "Setoran tabungan"}</div>
         </div>
-        <div class="text-subtle">${formattedDate}</div>
+        <div class="history-item-right">
+          <div class="text-subtle">${formattedDate}</div>
+          <button type="button" class="btn-delete" onclick="hapusSetoran('${key}')" aria-label="Hapus setoran">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 7h16"></path>
+              <path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+              <path d="M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"></path>
+              <path d="M10 11v6M14 11v6"></path>
+            </svg>
+          </button>
+        </div>
       `;
       historyList.appendChild(li);
     });
@@ -152,6 +162,17 @@ function setorUang(e) {
   }).catch((err) => {
     alert("Gagal menyimpan data: " + err.message);
   });
+}
+
+// --- HAPUS SETORAN ---
+function hapusSetoran(key) {
+  const konfirmasi = confirm("Hapus setoran ini? Tindakan ini tidak bisa dibatalkan.");
+  if (!konfirmasi) return;
+
+  db.ref("savings_history/" + key).remove()
+    .catch((err) => {
+      alert("Gagal menghapus data: " + err.message);
+    });
 }
 
 // --- UPDATE SUMMARY & PROGRESS BAR ---

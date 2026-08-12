@@ -550,6 +550,42 @@ select {
   padding-top: 2px;
 }
 
+.history-item-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.history-item-right .text-subtle {
+  padding-top: 0;
+}
+
+.btn-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-faint);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-delete:hover {
+  color: var(--rust);
+  background: var(--rust-soft);
+}
+
+.btn-delete:focus-visible {
+  outline: 2px solid var(--rust);
+  outline-offset: 2px;
+}
+
 .empty-state {
   text-align: center;
   color: var(--ink-faint);
@@ -594,5 +630,9 @@ select {
 
   .history-item > div:last-child {
     white-space: normal;
+  }
+
+  .history-item-right {
+    align-self: flex-end;
   }
 }
